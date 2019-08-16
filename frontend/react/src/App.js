@@ -21,10 +21,6 @@ import Button from '@material-ui/core/Button';
 
 import axios from 'axios';
 
-// todo:
-// deploy
-// remove comma from end of name
-
 const MBTOKEN = process.env.REACT_APP_MAPBOX_KEY
 
 const styles = theme => ({
@@ -36,7 +32,6 @@ const styles = theme => ({
     minWidth: 400,
   }
 });
-
 
 class App extends Component {
   constructor(props) {
@@ -60,8 +55,9 @@ class App extends Component {
   }
   componentDidMount() {
     // Here is a link to the API Documentation: https://dev.socrata.com/
-    axios.get('https://data.austintexas.gov/resource/h8x4-nvyi.json')
-      .then((res) => {
+    axios
+      .get('https://data.austintexas.gov/resource/h8x4-nvyi.json')
+      .then(res => {
         this.setState({ dogs: res.data, filteredDogs: res.data})
       })
       .catch(error=>console.log(error))
@@ -71,14 +67,19 @@ class App extends Component {
     // the data has quote marks as well as left/right quotes
     const nameRegEx = /"(.*)"|“(.*)”/;
     const nameArray = dogObj.description_of_dog.match(nameRegEx);
-    if (Array.isArray(nameArray)){
-      return nameArray[1] || nameArray[2]
+    let dogName = 'no name'
+    if (Array.isArray(nameArray)) {
+      dogName = nameArray[1] || nameArray[2]
     }
-    return 'no name';
+    // some of the dog names include a comma at the end. This removes the comma
+    if (dogName.slice(-1) === ','){
+      return dogName.slice(0,-1)
+    }
+    return dogName;
   }
 
   filterDogs(input) {
-    const searchMatch = new RegExp(input.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'));
+    const searchMatch = new RegExp(input.toLowerCase().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'));
     // edit the keys if you want to restrict which fields to search
     const keys = ['first_name', 'last_name', 'address', 'zip_code', 'description_of_dog'];
     let results = [];
@@ -94,25 +95,26 @@ class App extends Component {
           if (searchMatch.test(dogObj[key].toString().toLowerCase())
             && results.indexOf(dogObj) < 0) {
           results.push(dogObj);
-        }
+          }
+        });
       });
+    }
+
+    this.setState({filteredDogs: results});
+  }
+
+  handleChange(e) {
+    this.setState({
+      filter: e.target.value
     });
-  }
-
-  this.setState({filteredDogs: results});
-
-  }
-
-  handleChange(e){
-    this.setState({filter:e.target.value})
     this.filterDogs(e.target.value);
   }
 
-  clearFilter(){
+  clearFilter() {
     this.setState({
       filter: '',
       filteredDogs: this.state.dogs,
-    })
+    });
   }
 
   
@@ -131,7 +133,7 @@ class App extends Component {
         <p>The following dogs have been declared as Dangerous Dogs in the city of Austin.</p>
         <p>Filter the list of dogs by entering your search term in the input below</p>
 
-          <form className={classes.container} noValidate autoComplete="off">
+        <form className={classes.container} noValidate autoComplete="off">
           <TextField
             id="outlined-name"
             label="Search Dogs"
@@ -156,20 +158,20 @@ class App extends Component {
         <p>
           Clicking a row will center the map at that dog's residence.
           <Hidden smUp>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={(e)=> {
-              e.preventDefault();
-              mapElement.scrollIntoView({
-                behavior: "smooth",
-                block: "end",
-              });
-            }}
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={(e)=> {
+                e.preventDefault();
+                mapElement.scrollIntoView({
+                  behavior: "smooth",
+                  block: "end",
+                });
+              }}
             >
               Scroll to Map
             </Button>
-            </Hidden>
+          </Hidden>
         </p>
         <p>The data set and additional information is available at {' '}
           <a 
@@ -178,45 +180,44 @@ class App extends Component {
           </a>
         </p>
        <Paper className={classes.root}>
-       <Table className={classes.table} size="small">
-         <TableHead>
-           <TableRow>
-             <TableCell>Owner Name</TableCell>
-             <TableCell align="right">Address</TableCell>
-             <TableCell align="right">Zip Code</TableCell>
-             <TableCell align="right">Dog Name</TableCell>
-             <TableCell align="right">Description</TableCell>
-           </TableRow>
-         </TableHead>
-         <TableBody>
-           {this.state.filteredDogs.map(dog => (
-            <TableRow 
-              key={dog.name}
-              onClick={() => {
-                this.setState({
-                viewport: {
-                  ...this.state.viewport,
-                  longitude: dog.location.coordinates[0],
-                  latitude: dog.location.coordinates[1],
-                  zoom: 13,
-                }
-              })}
-              }
+         <Table className={classes.table} size="small">
+          <TableHead>
+             <TableRow>
+               <TableCell>Owner Name</TableCell>
+               <TableCell align="right">Address</TableCell>
+               <TableCell align="right">Zip Code</TableCell>
+               <TableCell align="right">Dog Name</TableCell>
+               <TableCell align="right">Description</TableCell>
+             </TableRow>
+           </TableHead>
+            <TableBody>
+             {this.state.filteredDogs.map(dog => (
+              <TableRow 
+                key={dog.name}
+                onClick={() => {
+                  this.setState({
+                  viewport: {
+                    ...this.state.viewport,
+                    longitude: dog.location.coordinates[0],
+                    latitude: dog.location.coordinates[1],
+                    zoom: 13,
+                  }
+                })}}
               >
-              <TableCell component="th" scope="row">
-                {`${dog.first_name} ${dog.last_name}`}
-              </TableCell>
-              <TableCell align="right">{dog.address}</TableCell>
-              <TableCell align="right">{dog.zip_code}</TableCell>
-              <TableCell align="right">{this.getDogName(dog)}</TableCell>
-              <TableCell align="right">{dog.description_of_dog}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
+                <TableCell component="th" scope="row">
+                  {`${dog.first_name} ${dog.last_name}`}
+                </TableCell>
+                <TableCell align="right">{dog.address}</TableCell>
+                <TableCell align="right">{dog.zip_code}</TableCell>
+                <TableCell align="right">{this.getDogName(dog)}</TableCell>
+                <TableCell align="right">{dog.description_of_dog}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
 
-       </Grid>
+      </Grid>
 
        <Grid item sm={5} xs={12} id='map'>
           <ReactMapGL
