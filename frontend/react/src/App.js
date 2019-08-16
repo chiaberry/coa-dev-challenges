@@ -16,6 +16,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Delete from '@material-ui/icons/Delete';
+import Button from '@material-ui/core/Button';
 
 import axios from 'axios';
 
@@ -154,6 +155,9 @@ class App extends Component {
             }}
           />
         </form>
+        <p>
+          Clicking a row will center the map at that dog's residence. 
+        </p>
         <p>The data set and additional information is available at {' '}
           <a 
             href="https://data.austintexas.gov/Health-and-Community-Services/Declared-Dangerous-Dogs/ykw4-j3aj">
@@ -212,6 +216,24 @@ class App extends Component {
             // mapStyle={'mapbox://styles/mapbox/streets-v8'}
             mapStyle={'mapbox://styles/chiaberry/cjzd7pze42uuy1cpd2tm827ym'}
           />
+          <div style={{padding:15}}>
+           <Button
+            variant="outlined"
+            size="small"
+            onClick={()=>{
+                this.setState({
+                viewport: {
+                  ...this.state.viewport,
+                longitude: -97.7431,
+                latitude: 30.2672,
+                zoom: 11
+                }
+              })}
+            }
+            >
+              Reset Map
+            </Button>
+          </div>
     </Grid>
     </Grid>
       </div>
