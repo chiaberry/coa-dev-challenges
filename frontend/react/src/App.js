@@ -179,44 +179,44 @@ class App extends Component {
             Open Data Portal
           </a>
         </p>
-       <Paper className={classes.root}>
-         <Table className={classes.table} size="small">
-          <TableHead>
-             <TableRow>
-               <TableCell>Owner Name</TableCell>
-               <TableCell align="right">Address</TableCell>
-               <TableCell align="right">Zip Code</TableCell>
-               <TableCell align="right">Dog Name</TableCell>
-               <TableCell align="right">Description</TableCell>
-             </TableRow>
-           </TableHead>
-            <TableBody>
-             {this.state.filteredDogs.map(dog => (
-              <TableRow 
-                key={dog.name}
-                onClick={() => {
-                  this.setState({
-                  viewport: {
-                    ...this.state.viewport,
-                    longitude: dog.location.coordinates[0],
-                    latitude: dog.location.coordinates[1],
-                    zoom: 13,
-                  }
-                })}}
-              >
-                <TableCell component="th" scope="row">
-                  {`${dog.first_name} ${dog.last_name}`}
-                </TableCell>
-                <TableCell align="right">{dog.address}</TableCell>
-                <TableCell align="right">{dog.zip_code}</TableCell>
-                <TableCell align="right">{this.getDogName(dog)}</TableCell>
-                <TableCell align="right">{dog.description_of_dog}</TableCell>
+        <Paper className={classes.root}>
+          <Table className={classes.table} size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Owner Name</TableCell>
+                <TableCell align="right">Address</TableCell>
+                <TableCell align="right">Zip Code</TableCell>
+                <TableCell align="right">Dog Name</TableCell>
+                <TableCell align="right">Description</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-
+            </TableHead>
+            <TableBody>
+              {this.state.filteredDogs.map(dog => (
+                <TableRow 
+                  key={dog.name}
+                  onClick={() => {
+                    this.setState({
+                      viewport: {
+                        ...this.state.viewport,
+                        longitude: dog.location.coordinates[0],
+                        latitude: dog.location.coordinates[1],
+                        zoom: 13,
+                      }
+                    })
+                  }}
+                >
+                  <TableCell component="th" scope="row">
+                    {`${dog.first_name} ${dog.last_name}`}
+                  </TableCell>
+                  <TableCell align="right">{dog.address}</TableCell>
+                  <TableCell align="right">{dog.zip_code}</TableCell>
+                  <TableCell align="right">{this.getDogName(dog)}</TableCell>
+                  <TableCell align="right">{dog.description_of_dog}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
       </Grid>
 
        <Grid item sm={5} xs={12} id='map'>
@@ -231,36 +231,36 @@ class App extends Component {
           />
           <div style={{padding:15}}>
            <Button
-            variant="outlined"
-            size="small"
-            onClick={()=>{
+              variant="outlined"
+              size="small"
+              onClick={()=> {
                 this.setState({
-                viewport: {
-                  ...this.state.viewport,
-                longitude: -97.7431,
-                latitude: 30.2672,
-                zoom: 11
-                }
-              })}
-            }
+                  viewport: {
+                    ...this.state.viewport,
+                    longitude: -97.7431,
+                      latitude: 30.2672,
+                    zoom: 11
+                  }
+                })
+              }}
             >
               Reset Map
             </Button>
             <Hidden smUp>
-            <Button
-            variant="outlined"
-            size="small"
-            onClick={()=>{
-              window.scroll({top:0,left:0,behavior:'smooth'});
-            }}
-            >
-             Back to Top
-            </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={()=>{
+                  window.scroll({top:0,left:0,behavior:'smooth'});
+                }}
+              >
+                Back to Top
+              </Button>
             </Hidden>
           </div>
+      </Grid>
     </Grid>
-    </Grid>
-      </div>
+    </div>
     );
   }
 }
