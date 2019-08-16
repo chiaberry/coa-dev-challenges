@@ -9,6 +9,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Hidden from '@material-ui/core/Hidden';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
@@ -22,8 +23,6 @@ import axios from 'axios';
 
 // todo:
 // deploy
-// add a reset map button?
-// lollipops?
 // remove comma from end of name
 
 const MBTOKEN = process.env.REACT_APP_MAPBOX_KEY
@@ -55,7 +54,6 @@ class App extends Component {
         "name": "default",
       },
       dogs: [],
-      selectedDog: {},
       filter: '',
       filteredDogs: [],
     };
@@ -106,7 +104,6 @@ class App extends Component {
   }
 
   handleChange(e){
-    console.log(e.target.value)
     this.setState({filter:e.target.value})
     this.filterDogs(e.target.value);
   }
@@ -121,6 +118,7 @@ class App extends Component {
   
   render() {
     const { classes } = this.props;
+    const mapElement = document.getElementById('map');
 
     return (
       <div className="App">
@@ -156,7 +154,22 @@ class App extends Component {
           />
         </form>
         <p>
-          Clicking a row will center the map at that dog's residence. 
+          Clicking a row will center the map at that dog's residence.
+          <Hidden smUp>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={(e)=> {
+              e.preventDefault();
+              mapElement.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+              });
+            }}
+            >
+              Scroll to Map
+            </Button>
+            </Hidden>
         </p>
         <p>The data set and additional information is available at {' '}
           <a 
@@ -180,7 +193,6 @@ class App extends Component {
             <TableRow 
               key={dog.name}
               onClick={() => {
-                console.log(dog.location.coordinates)
                 this.setState({
                 viewport: {
                   ...this.state.viewport,
@@ -206,7 +218,7 @@ class App extends Component {
 
        </Grid>
 
-       <Grid item sm={5} xs={12}>
+       <Grid item sm={5} xs={12} id='map'>
           <ReactMapGL
             ref={(reactMap)=> {this.reactMap = reactMap; }}
             {...this.state.viewport}
@@ -233,6 +245,17 @@ class App extends Component {
             >
               Reset Map
             </Button>
+            <Hidden smUp>
+            <Button
+            variant="outlined"
+            size="small"
+            onClick={()=>{
+              window.scroll({top:0,left:0,behavior:'smooth'});
+            }}
+            >
+             Back to Top
+            </Button>
+            </Hidden>
           </div>
     </Grid>
     </Grid>
