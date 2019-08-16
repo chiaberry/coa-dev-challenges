@@ -7,16 +7,9 @@
   height: 60px;
   padding: 20px;
   color: white;
+  width: 100%;
 }
 
 .App-intro {
   font-size: large;
-}
-
-.Dog-table {
-  background-color: 'pink';
-}
-
-.Paper {
-  background-color: 'deeppink'
 }

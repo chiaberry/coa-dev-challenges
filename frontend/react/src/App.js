@@ -19,6 +19,12 @@ import Delete from '@material-ui/icons/Delete';
 
 import axios from 'axios';
 
+// todo:
+// deploy
+// add a reset map button?
+// lollipops?
+// remove comma from end of name
+
 const MBTOKEN = process.env.REACT_APP_MAPBOX_KEY
 
 const styles = theme => ({
@@ -26,9 +32,9 @@ const styles = theme => ({
     width: '100%',
     overflowX: 'auto',
   },
-  table: {
-    // backgroundColor: 'deeppink',
-  },
+  table:{
+    minWidth: 400,
+  }
 });
 
 
@@ -37,8 +43,8 @@ class App extends Component {
     super(props);
     this.state = {
       viewport: {
-        width: 640,
-        height: 600,
+        width: 440,
+        height: 400,
         longitude: -97.7431,
         latitude: 30.2672,
         zoom: 11
@@ -57,9 +63,9 @@ class App extends Component {
     // Here is a link to the API Documentation: https://dev.socrata.com/
     axios.get('https://data.austintexas.gov/resource/h8x4-nvyi.json')
       .then((res) => {
-        console.log(res);
         this.setState({ dogs: res.data, filteredDogs: res.data})
       })
+      .catch(error=>console.log(error))
   }
 
   getDogName(dogObj){
@@ -89,7 +95,6 @@ class App extends Component {
           if (searchMatch.test(dogObj[key].toString().toLowerCase())
             && results.indexOf(dogObj) < 0) {
           results.push(dogObj);
-        console.log(results)
         }
       });
     });
@@ -115,7 +120,6 @@ class App extends Component {
   
   render() {
     const { classes } = this.props;
-    console.log('FILTERED: ', this.state.filteredDogs);
 
     return (
       <div className="App">
@@ -124,7 +128,7 @@ class App extends Component {
         </div>
 
        <Grid container spacing={3}>
-       <Grid item sm={6}>
+       <Grid item sm={7} xs={12}>
         <p>The following dogs have been declared as Dangerous Dogs in the city of Austin.</p>
         <p>Filter the list of dogs by entering your search term in the input below</p>
 
@@ -143,7 +147,6 @@ class App extends Component {
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={()=>this.clearFilter()}
-                  // onMouseDown={handleMouseDownPassword}
                 >
                   <Delete />
                 </IconButton>
@@ -157,7 +160,7 @@ class App extends Component {
             Open Data Portal
           </a>
         </p>
-       <Paper style={{padding: 24}}>
+       <Paper className={classes.root}>
        <Table className={classes.table} size="small">
          <TableHead>
            <TableRow>
@@ -199,7 +202,7 @@ class App extends Component {
 
        </Grid>
 
-       <Grid item sm={6}>
+       <Grid item sm={5} xs={12}>
           <ReactMapGL
             ref={(reactMap)=> {this.reactMap = reactMap; }}
             {...this.state.viewport}
