@@ -183,10 +183,10 @@ class App extends Component {
           <Table className={classes.table} size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Owner Name</TableCell>
+                <TableCell>Dog Name</TableCell>
+                <TableCell align="right">Owner Name</TableCell>
                 <TableCell align="right">Address</TableCell>
                 <TableCell align="right">Zip Code</TableCell>
-                <TableCell align="right">Dog Name</TableCell>
                 <TableCell align="right">Description</TableCell>
               </TableRow>
             </TableHead>
@@ -206,12 +206,20 @@ class App extends Component {
                   }}
                 >
                   <TableCell component="th" scope="row">
+                    {this.getDogName(dog)}
+                  </TableCell>
+                  <TableCell align="right">
                     {`${dog.first_name} ${dog.last_name}`}
                   </TableCell>
-                  <TableCell align="right">{dog.address}</TableCell>
-                  <TableCell align="right">{dog.zip_code}</TableCell>
-                  <TableCell align="right">{this.getDogName(dog)}</TableCell>
-                  <TableCell align="right">{dog.description_of_dog}</TableCell>
+                  <TableCell align="right">
+                    {dog.address}
+                  </TableCell>
+                  <TableCell align="right">
+                    {dog.zip_code}
+                  </TableCell>
+                  <TableCell align="right">
+                    {dog.description_of_dog}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
