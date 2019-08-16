@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import ReactMapGL from 'react-map-gl';
 import { makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/styles';
 import Table from '@material-ui/core/Table';
@@ -18,6 +19,8 @@ import Delete from '@material-ui/icons/Delete';
 
 import axios from 'axios';
 
+const MBTOKEN = process.env.REACT_APP_MAPBOX_KEY
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -33,6 +36,17 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      viewport: {
+        width: 640,
+        height: 600,
+        longitude: -97.7431,
+        latitude: 30.2672,
+        zoom: 11
+      },
+      mapStyle: {
+        "version": 8,
+        "name": "default",
+      },
       dogs: [],
       selectedDog: {},
       filter: '',
@@ -75,6 +89,7 @@ class App extends Component {
           if (searchMatch.test(dogObj[key].toString().toLowerCase())
             && results.indexOf(dogObj) < 0) {
           results.push(dogObj);
+        console.log(results)
         }
       });
     });
@@ -100,6 +115,7 @@ class App extends Component {
   
   render() {
     const { classes } = this.props;
+    console.log('FILTERED: ', this.state.filteredDogs);
 
     return (
       <div className="App">
@@ -154,7 +170,20 @@ class App extends Component {
          </TableHead>
          <TableBody>
            {this.state.filteredDogs.map(dog => (
-            <TableRow key={dog.name}>
+            <TableRow 
+              key={dog.name}
+              onClick={() => {
+                console.log(dog.location.coordinates)
+                this.setState({
+                viewport: {
+                  ...this.state.viewport,
+                  longitude: dog.location.coordinates[0],
+                  latitude: dog.location.coordinates[1],
+                  zoom: 13,
+                }
+              })}
+              }
+              >
               <TableCell component="th" scope="row">
                 {`${dog.first_name} ${dog.last_name}`}
               </TableCell>
@@ -167,11 +196,19 @@ class App extends Component {
         </TableBody>
       </Table>
     </Paper>
-        
+
        </Grid>
 
        <Grid item sm={6}>
-
+          <ReactMapGL
+            ref={(reactMap)=> {this.reactMap = reactMap; }}
+            {...this.state.viewport}
+            onViewportChange={(viewport) => this.setState({viewport})}
+            mapboxApiAccessToken={MBTOKEN}
+            onLoad={()=>console.log('loaded ', this.state.mapStyle)}
+            // mapStyle={'mapbox://styles/mapbox/streets-v8'}
+            mapStyle={'mapbox://styles/chiaberry/cjzd7pze42uuy1cpd2tm827ym'}
+          />
     </Grid>
     </Grid>
       </div>
